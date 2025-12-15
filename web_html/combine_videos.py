@@ -33,11 +33,11 @@ VIDEO_LABELS = {
     "Gen3DSR": "Gen3DSR", 
     "MIDI": "MIDI",
     "SceneGen": "SceneGen",
-    "nov-04-5block": "GSLR (Ours)",
+    "I-Scene": "I-Scene (Ours)",
 }
 
 # Order for display (left to right)
-VIDEO_ORDER = ["PartCrafter", "Gen3DSR", "MIDI", "SceneGen", "nov-04-5block"]
+VIDEO_ORDER = ["PartCrafter", "Gen3DSR", "MIDI", "SceneGen", "I-Scene"]
 
 
 def get_video_config(input_dir):
@@ -68,11 +68,11 @@ FONT_SIZE = 64
 FONT_COLOR = "black"
 BORDER_WIDTH = 0
 BORDER_COLOR = "black"
-TEXT_Y_OFFSET = 80  # pixels from bottom
+TEXT_Y_OFFSET = 60  # pixels from bottom
 
 # Bottom padding (percentage of video height)
 # 0.1 = 10% of height added at bottom
-BOTTOM_PADDING_PERCENT = 0.15
+BOTTOM_PADDING_PERCENT = 0.2
 PADDING_COLOR = "white"
 # --------------------------
 
