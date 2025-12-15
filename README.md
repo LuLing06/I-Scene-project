@@ -29,19 +29,20 @@
   <img src="web_html/teaser.png" alt="Teaser" width="800">
 </p>
 
-## 🔑 Key Findings
+## 🔑 Key Features
 
 - **Model Flexibility:** A pre-trained 3D instance generator can be directly reprogrammed as a scene-level spatial learner, without scene-level annotations.
 - **Transferable Spatial Prior:** The reprogrammed model's spatial prior provides a rich learning signal for inferring proximity, support, and symmetry from purely geometric cues.
 - **Data Independence:** The model learns spatial knowledge on non-semantic scenes from randomly composed objects, removing dependency on annotated data.
-- **Strong Generalizability:** It allows for easy generalization to unseen layouts and various spatial relations, surpassing SOTA methods trained on annotated scenes.
+- **Strong Generalizability:** It allows for easy generalization to unseen layouts and various spatial relations in a feed-forward manner without per-scene optimization.
 
-## ⏩ Updates
+## 🔥 Updates
 
 - [ ] Release inference code
 - [ ] Release sparse structure latent VAE weights
 - [ ] Release interactive huggingface demo and usage
 - [ ] Release training data
+- [ ] Release evaluation code
 
 
 ## 🚀 Demo
