@@ -33,18 +33,18 @@
   <img src="web_html/video2/input.png" alt="Teaser" width="600">
 </p>
 
-## 📖 Abstract
-
-Generalization remains the central challenge for interactive 3D scene generation. Existing learning-based approaches ground spatial understanding in limited scene datasets, restricting generalization to new layouts. We instead reprogram a pre-trained 3D instance generator to act as a scene-level learner, replacing dataset-bounded supervision with model-centric spatial supervision. This reprogramming unlocks the generator's transferable spatial knowledge, enabling generalization to unseen layouts and novel object compositions.
-
-Remarkably, **spatial reasoning still emerges even when the training scenes are randomly composed objects**. This demonstrates that the generator's transferable scene prior provides a rich learning signal for inferring proximity, support, and symmetry from purely geometric cues.
-
 ## 🔑 Key Findings
 
 - **Model Flexibility:** A pre-trained 3D instance generator can be directly reprogrammed as a scene-level spatial learner, without scene-level annotations.
 - **Transferable Spatial Prior:** The reprogrammed model's spatial prior provides a rich learning signal for inferring proximity, support, and symmetry from purely geometric cues.
 - **Data Independence:** The model learns spatial knowledge on non-semantic scenes from randomly composed objects, removing dependency on annotated data.
 - **Strong Generalization:** It allows for easy generalization to unseen layouts and various spatial relations, surpassing SOTA methods trained on annotated scenes.
+
+## ⏩ Updates
+
+- [ ] Release inference code
+- [ ] Release sparse structure latent VAE weights
+- [ ] Release training data
 
 ## 🚀 Demo
 
