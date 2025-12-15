@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Instance Models are Implicit Generalizable Spatial Learners</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #000000;
+            --secondary-color: #333333;
+            --background-color: #ffffff;
+            --highlight-color: #007bff; /* Standard Blue for Hyperlinks/Author Names */
+            --button-bg: #363636; /* Deep Dark Gray for buttons (Matching Reference) */
+            --button-text: #ffffff;
+            --placeholder-bg: #f0f0f0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.7;
+            color: var(--secondary-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 98%;
+            max-width: 2200px; 
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0 20px 0;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 2.8em;
+            margin: 0 0 10px 0;
+            line-height: 1.2;
+        }
+
+        header .authors {
+            font-size: 1.1em;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+        
+        .author-link {
+            text-decoration: none;
+            color: var(--highlight-color); /* Authors' names in Blue */
+            font-weight: 500;
+            padding: 0 5px;
+            display: inline-block;
+        }
+        
+        .author-link:hover {
+            text-decoration: underline;
+        }
+        
+        .institution-list {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .sup {
+            font-size: 0.7em;
+            vertical-align: super;
+            color: #666; /* Match the institution color */
+        }
+
+        /* Project Links Buttons (MODIFIED to match reference shape) */
+        .project-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* Increased gap for better visual separation */
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--placeholder-bg);
+        }
+
+        .project-links a {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            padding: 10px 25px; /* Wider padding */
+            border-radius: 50px; /* Highly rounded corners */
+            text-decoration: none;
+            font-weight: 500; /* Slightly lighter weight */
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            font-size: 1.05em;
+        }
+
+        .project-links a:hover {
+            background-color: #555; /* Slightly lighter gray on hover */
+        }
+        
+        .project-links i {
+            margin-right: 8px;
+            font-size: 1.2em; /* Ensure icons are prominent */
+        }
+
+        section {
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 25px;
+            padding-top: 10px;
+        }
+
+        .abstract, .findings {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .abstract p {
+            text-align: justify;
+            margin-bottom: 1em;
+            font-size: 1.05em;
+        }
+
+        .findings ul {
+            list-style: none;
+            padding-left: 0;
+            display: grid;
+            gap: 15px;
+            grid-template-columns: 1fr;
+        }
+
+        .findings li {
+            padding-left: 1.5em;
+            position: relative;
+        }
+
+        .findings li::before {
+            content: '✅'; 
+            position: absolute;
+            left: 0;
+            color: var(--highlight-color);
+        }
+
+        /* Placeholder Styles */
+        .placeholder {
+            min-height: 400px;
+            background-color: var(--placeholder-bg);
+            border: 2px dashed #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin: 20px auto;
+            padding: 20px;
+            flex-direction: column;
+            border-radius: 8px;
+            max-width: 850px; 
+        }
+        
+        .placeholder-media-hint {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .citation-placeholder {
+            min-height: 150px;
+            max-width: 2000px;
+            margin: 20px auto 0 auto;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #333;
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        #citation {
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+        
+        #citation p {
+            text-align: center;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            .project-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .container {
+                width: 95%;
+            }
+        }
+
+        /* Video Slider Styles */
+        .main-video-wrapper {
+            width: 100%;
+            max-width: 2000px;
+            aspect-ratio: 16 / 5;  /* Wide aspect ratio for side-by-side comparison */
+            margin: 0 auto 24px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            background: #000;
+        }
+        #mainVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        #thumbBar {
+            flex: 1;
+            max-width: 1800px;
+            overflow-x: auto;
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #f4f4ff;
+            scroll-behavior: smooth;
+        }
+
+        .thumb {
+            flex: 0 0 220px;
+            height: 220px;
+            border-radius: 12px;
+            background: #f8f8f8;
+            cursor: pointer;
+            user-select: none;
+            border: 3px solid transparent;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: border-color 0.2s, transform 0.2s;
+            overflow: hidden;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumb.active {
+            border-color: #4f7cff;
+            transform: scale(1.05);
+        }
+
+        .thumb:hover {
+            border-color: #aaa;
+        }
+
+        .arrow-btn {
+            border: none;
+            background: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            cursor: pointer;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .arrow-btn:hover {
+            background: #f0f0f0;
+        }
+
+        /* 3D Viewer Styles */
+        .viewer-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            height: 550px;
+            margin: 0 auto 30px auto;
+            background: #f5f5f5;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            border: 1px solid #ddd;
+        }
+
+        #threeCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .loading-text-3d {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .instance-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .instance-btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .instance-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .instance-btn.active {
+            background-color: #0056b3;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+        }
+
+        .instance-btn.show-all {
+            background-color: #28a745;
+        }
+
+        .instance-btn.show-all:hover {
+            background-color: #1e7e34;
+        }
+
+        .instance-btn.show-all.active {
+            background-color: #1e7e34;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        .slider-section-3d {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .slider-wrapper-3d {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .arrow-btn-3d {
+            border: none;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            cursor: pointer;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            transition: all 0.2s;
+            color: #007bff;
+            flex-shrink: 0;
+        }
+
+        .arrow-btn-3d:hover {
+            background: #007bff;
+            color: white;
+        }
+
+        #thumbBar3D {
+            flex: 1;
+            max-width: 1400px;
+            overflow-x: auto;
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 16px;
+            background: #e8ebff;
+            scroll-behavior: smooth;
+        }
+
+        .thumb-3d {
+            flex: 0 0 180px;
+            height: 180px;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            user-select: none;
+            border: 4px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .thumb-3d img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumb-3d:hover {
+            border-color: #aaa;
+        }
+
+        .thumb-3d.active {
+            border-color: #007bff;
+            box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <header>
+            <h1>3D Instance Models are Implicit Generalizable Spatial Learners</h1>
+            <div class="authors">
+                <p>
+                    <a href="https://luling06.github.io/" class="author-link" target="_blank">Lu Ling<span class="sup">1</span></a>; 
+                    <a href="https://gyhandy.github.io/" class="author-link" target="_blank">Yunhao Ge<span class="sup">2</span></a>, 
+                    <a href="https://shengcn.github.io/" class="author-link" target="_blank">Yichen Sheng<span class="sup">2</span></a>, 
+                    <a href="https://www.cs.purdue.edu/homes/ab/" class="author-link" target="_blank">Aniket Bera<span class="sup">1</span></a>
+                </p>
+                <div class="institution-list">
+                    <span class="sup">1</span>Purdue University &nbsp; • &nbsp; <span class="sup">2</span>NVIDIA
+                </div>
+            </div>
+            
+            <div class="project-links">
+                <a href="#" target="_blank"><i class="fas fa-file-alt"></i> Paper</a>
+                <a href="#" target="_blank"><i class="fab fa-github"></i> Code</a>
+                <a href="#" target="_blank"><i class="fas fa-database"></i> Model</a> <a href="#" target="_blank"><i class="fas fa-smile"></i> Demo</a> </div>
+        </header>
+        
+        <section id="teaser-video">
+            <h2>Teaser Video / Project Overview</h2>
+            <div class="placeholder" style="min-height: 500px;">
+                <p>Placeholder for Teaser Video (Embed YouTube/Vimeo or self-hosted video here)</p>
+                <div class="placeholder-media-hint">
+                    *This video should be the first thing a visitor sees, summarizing the idea and results.*
+                </div>
+            </div>
+        </section>
+
+
+        <section id="abstract" class="abstract">
+            <h2>Abstract</h2>
+            <p>Generalization remains the central challenge for interactive 3D scene generation. Existing learning‑based approaches ground spatial understanding in limited scene dataset, restricting generalization to new layouts. We instead reprogram a pre‑trained 3D instance generator to act as a scene‑level learner via, replacing dataset-bounded supervision with model-centric spatial supervision. This reprogramming unlocks the generator's transferable spatial knowledge, enabling generalization to unseen layouts and novel object compositions. 
+                Remarkably, spatial reasoning still emerges even when the training scenes are randomly composed objects. This demonstrates that the generator’s transferable scene prior provides a rich learning signal for inferring proximity, support, and symmetry from purely geometric cues. Replacing widely used canonical space, we instantiate this insight with a view‑centric formulation of the scene space, yielding a fully feed‑forward, generalizable scene generator that learns spatial relations directly from the instance model. Quantitative and qualitative results show that a 3D instance generator is an implicit spatial learner and reasoner, pointing toward foundation models for interactive 3D scene understanding and generation.</p>
+        </section>
+
+        <section id="visualization">
+            <h2>More Visualization Examples (Interactive Results)</h2>
+            
+            <!-- 3D Viewer Area -->
+            <div class="viewer-wrapper">
+                <canvas id="threeCanvas"></canvas>
+                <div class="loading-text-3d" id="loadingText3D">Loading 3D Scene...</div>
+            </div>
+
+            <!-- Instance Toggle Buttons -->
+            <div class="instance-buttons" id="instanceButtons">
+                <!-- Will be populated after model loads -->
+            </div>
+
+            <!-- Thumbnail Slider for 3D -->
+            <div class="slider-section-3d">
+                <div class="slider-wrapper-3d">
+                    <button class="arrow-btn-3d" id="leftBtn3D">‹</button>
+                    <div id="thumbBar3D">
+                        <!-- Thumbnails will be dynamically created -->
+                    </div>
+                    <button class="arrow-btn-3d" id="rightBtn3D">›</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="comparison">
+            <h2>Comparison with State-of-the-Art (SOTA)</h2>
+            
+            <!-- Main Video -->
+            <div class="main-video-wrapper">
+                <video id="mainVideo" controls muted autoplay loop
+                       src="web_html/video1/bpyrenderer_output/combined_sidebyside.mp4"></video>
+            </div>
+
+            <!-- Thumbnail Slider -->
+            <div class="slider-wrapper">
+                <button class="arrow-btn" id="leftBtn">‹</button>
+
+                <div id="thumbBar">
+                    <div class="thumb active" data-video="web_html/video1/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video1/input.png" alt="Scene 1">
+                    </div>
+                    <div class="thumb" data-video="web_html/video2/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video2/input.png" alt="Scene 2">
+                    </div>
+                    <div class="thumb" data-video="web_html/video3/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video3/input.png" alt="Scene 3">
+                    </div>
+                    <div class="thumb" data-video="web_html/video4/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video4/input.png" alt="Scene 4">
+                    </div>
+                    <div class="thumb" data-video="web_html/video5/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video5/input.png" alt="Scene 5">
+                    </div>
+                    <div class="thumb" data-video="web_html/video6/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video6/input.png" alt="Scene 6">
+                    </div>
+                    <div class="thumb" data-video="web_html/video7/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video7/input.png" alt="Scene 7">
+                    </div>
+                    <div class="thumb" data-video="web_html/video8/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video8/input.png" alt="Scene 8">
+                    </div>
+                    <div class="thumb" data-video="web_html/video9/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video9/input.png" alt="Scene 9">
+                    </div>
+                    <div class="thumb" data-video="web_html/video10/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video10/input.png" alt="Scene 10">
+                    </div>
+                    <div class="thumb" data-video="web_html/video11/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video11/input.png" alt="Scene 11">
+                    </div>
+                    <div class="thumb" data-video="web_html/video12/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video12/input.png" alt="Scene 12">
+                    </div>
+                    <div class="thumb" data-video="web_html/video13/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video13/input.png" alt="Scene 13">
+                    </div>
+                    <div class="thumb" data-video="web_html/video14/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video14/input.png" alt="Scene 14">
+                    </div>
+                    <div class="thumb" data-video="web_html/video15/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video15/input.png" alt="Scene 15">
+                    </div>
+                    <div class="thumb" data-video="web_html/video16/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video16/input.png" alt="Scene 16">
+                    </div>
+                    <div class="thumb" data-video="web_html/video17/bpyrenderer_output/combined_sidebyside.mp4">
+                        <img src="web_html/video17/input.png" alt="Scene 17">
+                    </div>
+                </div>
+
+                <button class="arrow-btn" id="rightBtn">›</button>
+            </div>
+        </section>
+
+        <section id="method">
+            <h2>Method Overview / How It Works</h2>
+            <div class="placeholder" style="min-height: 500px;">
+                <p>Placeholder for Short Video / Animated GIF explaining the Training Data, Input, and Output Process</p>
+                <div class="placeholder-media-hint">
+                    *This section should visually describe the pipeline/architecture.*
+                </div>
+            </div>
+        </section>
+
+        <section id="findings" class="findings">
+            <h2>Key Findings for Non-Semantic Scenes</h2>
+            <ul>
+                <li>Instead of high-level scene semnatics, geometric cue alone provides a strong learning signal for spatial reasoning.</li>
+                <li>Non-semantic spatial relations are a valuable supervision source; scaling non-semantic data provides richer spatial coverage that the model can exploit.</li>
+            </ul>
+        </section>
+
+        <section id="citation">
+            <h2>Citation</h2>
+            <p>If you find this work useful, please consider citing our paper:</p>
+            <div class="citation-placeholder">
+                <p>// PLEASE INSERT YOUR BIBTEX CITATION HERE //</p>
+                <p>E.g., @inproceedings{ling20243d, author={Ling, Lu and Ge, Yunhao and ...}, booktitle={CVPR}, title={3D Instance Models...}, year={2024}}</p>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const mainVideo = document.getElementById('mainVideo');
+        const thumbBar  = document.getElementById('thumbBar');
+        const thumbs    = Array.from(document.querySelectorAll('.thumb'));
+
+        const leftBtn  = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+
+        let currentIndex = 0;
+
+        function setActive(i) {
+            currentIndex = i;
+
+            // 1. Switch video
+            const src = thumbs[i].dataset.video;
+            if (src) {
+                mainVideo.src = src;
+                mainVideo.play();
+            }
+
+            // 2. Update thumbnail highlight
+            thumbs.forEach(t => t.classList.remove('active'));
+            thumbs[i].classList.add('active');
+
+            // 3. Scroll thumbnail into view
+            thumbs[i].scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest'
+            });
+        }
+
+        // Click thumbnail
+        thumbs.forEach((thumb, i) => {
+            thumb.addEventListener('click', () => setActive(i));
+        });
+
+        // Left/right arrow scroll
+        leftBtn.addEventListener('click', () => {
+            thumbBar.scrollBy({ left: -130, behavior: 'smooth' });
+        });
+
+        rightBtn.addEventListener('click', () => {
+            thumbBar.scrollBy({ left: 130, behavior: 'smooth' });
+        });
+    </script>
+
+<!-- Three.js for Interactive 3D Viewer -->
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+}
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ============================================
+    // SCENE DATA CONFIGURATION (video1 - video19)
+    // ============================================
+    var scenes3D = [
+        { name: "Scene 1", thumbnailImg: "web_html/video1/input.png", glbPath: "web_html/video1/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 2", thumbnailImg: "web_html/video2/input.png", glbPath: "web_html/video2/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb" },
+        { name: "Scene 3", thumbnailImg: "web_html/video3/input.png", glbPath: "web_html/video3/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 4", thumbnailImg: "web_html/video4/input.png", glbPath: "web_html/video4/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 5", thumbnailImg: "web_html/video5/input.png", glbPath: "web_html/video5/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb" },
+        { name: "Scene 6", thumbnailImg: "web_html/video6/input.png", glbPath: "web_html/video6/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 7", thumbnailImg: "web_html/video7/input.png", glbPath: "web_html/video7/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 8", thumbnailImg: "web_html/video8/input.png", glbPath: "web_html/video8/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb" },
+        { name: "Scene 9", thumbnailImg: "web_html/video9/input.png", glbPath: "web_html/video9/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 10", thumbnailImg: "web_html/video10/input.png", glbPath: "web_html/video10/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 11", thumbnailImg: "web_html/video11/input.png", glbPath: "web_html/video11/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb" },
+        { name: "Scene 12", thumbnailImg: "web_html/video12/input.png", glbPath: "web_html/video12/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 13", thumbnailImg: "web_html/video13/input.png", glbPath: "web_html/video13/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 14", thumbnailImg: "web_html/video14/input.png", glbPath: "web_html/video14/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb" },
+        { name: "Scene 15", thumbnailImg: "web_html/video15/input.png", glbPath: "web_html/video15/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 16", thumbnailImg: "web_html/video16/input.png", glbPath: "web_html/video16/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 17", thumbnailImg: "web_html/video17/input.png", glbPath: "web_html/video17/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb" },
+        { name: "Scene 18", thumbnailImg: "web_html/video18/input.png", glbPath: "web_html/video18/scene_pred.glb" },
+        { name: "Scene 19", thumbnailImg: "web_html/video19/input.png", glbPath: "web_html/video19/scene_pred (1).glb" }
+    ];
+
+    // DOM Elements
+    var canvas3D = document.getElementById('threeCanvas');
+    var instanceButtons = document.getElementById('instanceButtons');
+    var thumbBar3D = document.getElementById('thumbBar3D');
+    var leftBtn3D = document.getElementById('leftBtn3D');
+    var rightBtn3D = document.getElementById('rightBtn3D');
+    var loadingText3D = document.getElementById('loadingText3D');
+
+    // Three.js Variables
+    var scene3D, camera3D, renderer3D, controls3D, loader3D;
+    var currentModel3D = null;
+    var sceneObjects3D = [];
+
+    // Initialize Three.js
+    function initThree() {
+        scene3D = new THREE.Scene();
+        scene3D.background = new THREE.Color(0xf5f5f5);
+
+        var aspect = canvas3D.clientWidth / canvas3D.clientHeight;
+        camera3D = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+        camera3D.position.set(3, 3, 3);
+
+        renderer3D = new THREE.WebGLRenderer({ canvas: canvas3D, antialias: true });
+        renderer3D.setSize(canvas3D.clientWidth, canvas3D.clientHeight);
+        renderer3D.setPixelRatio(window.devicePixelRatio);
+        renderer3D.outputColorSpace = THREE.SRGBColorSpace;
+        renderer3D.toneMapping = THREE.NoToneMapping;
+        renderer3D.shadowMap.enabled = true;
+        renderer3D.shadowMap.type = THREE.VSMShadowMap;
+
+        controls3D = new OrbitControls(camera3D, renderer3D.domElement);
+        controls3D.enableDamping = true;
+        controls3D.dampingFactor = 0.05;
+        controls3D.autoRotate = true;
+        controls3D.autoRotateSpeed = 1.0;
+
+        // Lighting
+        scene3D.add(new THREE.AmbientLight(0xffffff, 1.2));
+        
+        var mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        mainLight.position.set(8, 15, 10);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
+        mainLight.shadow.camera.near = 0.1;
+        mainLight.shadow.camera.far = 100;
+        mainLight.shadow.camera.left = -15;
+        mainLight.shadow.camera.right = 15;
+        mainLight.shadow.camera.top = 15;
+        mainLight.shadow.camera.bottom = -15;
+        mainLight.shadow.radius = 8;
+        mainLight.shadow.blurSamples = 25;
+        scene3D.add(mainLight);
+
+        scene3D.add(new THREE.DirectionalLight(0xffffff, 0.5).translateX(-5).translateY(5).translateZ(-5));
+        scene3D.add(new THREE.HemisphereLight(0xffffff, 0x888888, 0.8));
+
+        // Ground for shadows
+        var ground = new THREE.Mesh(
+            new THREE.PlaneGeometry(30, 30),
+            new THREE.ShadowMaterial({ opacity: 0.2 })
+        );
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -1.5;
+        ground.receiveShadow = true;
+        ground.name = 'shadowGround3D';
+        scene3D.add(ground);
+
+        loader3D = new GLTFLoader();
+        window.addEventListener('resize', onWindowResize3D);
+        animate3D();
+    }
+
+    function onWindowResize3D() {
+        camera3D.aspect = canvas3D.clientWidth / canvas3D.clientHeight;
+        camera3D.updateProjectionMatrix();
+        renderer3D.setSize(canvas3D.clientWidth, canvas3D.clientHeight);
+    }
+
+    function animate3D() {
+        requestAnimationFrame(animate3D);
+        controls3D.update();
+        renderer3D.render(scene3D, camera3D);
+    }
+
+    // Load Scene
+    function loadScene3D(index) {
+        var sceneData = scenes3D[index];
+        loadingText3D.style.display = 'block';
+        loadingText3D.textContent = 'Loading ' + sceneData.name + '...';
+
+        if (currentModel3D) {
+            scene3D.remove(currentModel3D);
+            currentModel3D = null;
+        }
+        sceneObjects3D = [];
+        instanceButtons.innerHTML = '';
+
+        loader3D.load(
+            sceneData.glbPath,
+            function(gltf) {
+                currentModel3D = gltf.scene;
+                scene3D.add(currentModel3D);
+
+                // Find instances
+                currentModel3D.children.forEach(function(child) {
+                    var hasMesh = false;
+                    child.traverse(function(n) { if (n.isMesh) hasMesh = true; });
+                    if (hasMesh || child.isMesh) sceneObjects3D.push(child);
+                });
+
+                if (sceneObjects3D.length <= 1 && currentModel3D.children.length > 0) {
+                    sceneObjects3D = [];
+                    var first = currentModel3D.children[0];
+                    if (first.children && first.children.length > 1) {
+                        first.children.forEach(function(gc) { sceneObjects3D.push(gc); });
+                    }
+                }
+
+                if (sceneObjects3D.length <= 1) {
+                    sceneObjects3D = [];
+                    currentModel3D.traverse(function(n) { if (n.isMesh) sceneObjects3D.push(n); });
+                }
+
+                // Setup materials and shadows
+                currentModel3D.traverse(function(node) {
+                    if (node.isMesh) {
+                        node.castShadow = true;
+                        node.receiveShadow = true;
+                        if (node.material) {
+                            var mats = Array.isArray(node.material) ? node.material : [node.material];
+                            mats.forEach(function(m) {
+                                if (m.isMeshStandardMaterial) { m.metalness = 0; m.roughness = 0.5; }
+                                m.needsUpdate = true;
+                            });
+                        }
+                    }
+                });
+
+                // Center and scale
+                var box = new THREE.Box3().setFromObject(currentModel3D);
+                var center = box.getCenter(new THREE.Vector3());
+                var size = box.getSize(new THREE.Vector3());
+                var scale = 3 / Math.max(size.x, size.y, size.z);
+                currentModel3D.scale.setScalar(scale);
+                currentModel3D.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
+
+                var scaledBox = new THREE.Box3().setFromObject(currentModel3D);
+                var shadowGround = scene3D.getObjectByName('shadowGround3D');
+                if (shadowGround) shadowGround.position.y = scaledBox.min.y - 0.01;
+
+                camera3D.position.set(3, 3, 3);
+                controls3D.target.set(0, 0, 0);
+                controls3D.update();
+
+                createInstanceButtons3D();
+                loadingText3D.style.display = 'none';
+            },
+            function(p) { if (p.total > 0) loadingText3D.textContent = 'Loading... ' + Math.round(p.loaded/p.total*100) + '%'; },
+            function(e) { console.error(e); loadingText3D.textContent = 'Error loading model'; }
+        );
+    }
+
+    function createInstanceButtons3D() {
+        instanceButtons.innerHTML = '';
+        sceneObjects3D.forEach(function(obj, i) {
+            var btn = document.createElement('button');
+            btn.className = 'instance-btn';
+            btn.textContent = 'Show Instance ' + (i + 1);
+            btn.onclick = function() { showInstance3D(i); };
+            instanceButtons.appendChild(btn);
+        });
+        var allBtn = document.createElement('button');
+        allBtn.className = 'instance-btn show-all active';
+        allBtn.textContent = 'Show All';
+        allBtn.onclick = showAllInstances3D;
+        instanceButtons.appendChild(allBtn);
+    }
+
+    function showInstance3D(index) {
+        sceneObjects3D.forEach(function(o, i) { o.visible = (i === index); });
+        var btns = instanceButtons.querySelectorAll('.instance-btn');
+        btns.forEach(function(b, i) {
+            b.classList.toggle('active', b.classList.contains('show-all') ? false : i === index);
+        });
+    }
+
+    function showAllInstances3D() {
+        sceneObjects3D.forEach(function(o) { o.visible = true; });
+        var btns = instanceButtons.querySelectorAll('.instance-btn');
+        btns.forEach(function(b) {
+            b.classList.toggle('active', b.classList.contains('show-all'));
+        });
+    }
+
+    function createThumbnails3D() {
+        thumbBar3D.innerHTML = '';
+        scenes3D.forEach(function(s, i) {
+            var t = document.createElement('div');
+            t.className = 'thumb-3d' + (i === 0 ? ' active' : '');
+            t.innerHTML = '<img src="' + s.thumbnailImg + '" alt="' + s.name + '">';
+            t.onclick = function() {
+                document.querySelectorAll('.thumb-3d').forEach(function(x, j) { x.classList.toggle('active', j === i); });
+                loadScene3D(i);
+                t.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            };
+            thumbBar3D.appendChild(t);
+        });
+    }
+
+    leftBtn3D.onclick = function() { thumbBar3D.scrollBy({ left: -200, behavior: 'smooth' }); };
+    rightBtn3D.onclick = function() { thumbBar3D.scrollBy({ left: 200, behavior: 'smooth' }); };
+
+    // Initialize
+    initThree();
+    createThumbnails3D();
+    loadScene3D(0);
+</script>
+</body>
+</html>

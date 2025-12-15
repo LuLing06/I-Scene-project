@@ -1,0 +1,5 @@
+file 'Gen3DSR-latest_rgb.mp4'
+file 'MIDI-latest_1_rgb.mp4'
+file 'PartCrafter-latest_rgb.mp4'
+file 'SceneGen-latest_rgb.mp4'
+file 'nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000_rgb.mp4'

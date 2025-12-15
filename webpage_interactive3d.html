@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Scene Viewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --background-color: #ffffff;
+            --viewer-bg: #f5f5f5;
+            --slider-bg: #e8ebff;
+            --text-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        /* 3D Viewer Area */
+        .viewer-wrapper {
+            width: 100%;
+            max-width: 1000px;
+            height: 550px;
+            margin: 0 auto 30px auto;
+            background: var(--viewer-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            border: 1px solid #ddd;
+        }
+
+        #threeCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .loading-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Instance Toggle Buttons */
+        .instance-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .instance-btn {
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .instance-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .instance-btn.active {
+            background-color: #0056b3;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+        }
+
+        .instance-btn.show-all {
+            background-color: #28a745;
+        }
+
+        .instance-btn.show-all:hover {
+            background-color: #1e7e34;
+        }
+
+        .instance-btn.show-all.active {
+            background-color: #1e7e34;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        /* Thumbnail Slider */
+        .slider-section {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .arrow-btn {
+            border: none;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            cursor: pointer;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            transition: all 0.2s;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .arrow-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        #thumbBar {
+            flex: 1;
+            max-width: 1400px;
+            overflow-x: auto;
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 16px;
+            background: var(--slider-bg);
+            scroll-behavior: smooth;
+        }
+
+        .thumb {
+            flex: 0 0 200px;
+            height: 200px;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            user-select: none;
+            border: 4px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumb:hover {
+            border-color: #aaa;
+        }
+
+        .thumb.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 16px rgba(0, 123, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Interactive 3D Scene Results</h2>
+
+    <!-- 3D Viewer Area -->
+    <div class="viewer-wrapper">
+        <canvas id="threeCanvas"></canvas>
+        <div class="loading-text" id="loadingText">Loading 3D Scene...</div>
+    </div>
+
+    <!-- Instance Toggle Buttons -->
+    <div class="instance-buttons" id="instanceButtons">
+        <!-- Will be populated after model loads -->
+    </div>
+
+    <!-- Thumbnail Slider -->
+    <div class="slider-section">
+        <div class="slider-wrapper">
+            <button class="arrow-btn" id="leftBtn">‹</button>
+
+            <div id="thumbBar">
+                <!-- Thumbnails will be dynamically created -->
+            </div>
+
+            <button class="arrow-btn" id="rightBtn">›</button>
+        </div>
+    </div>
+</div>
+
+<!-- Three.js via ES Modules -->
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+}
+</script>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ============================================
+    // SCENE DATA CONFIGURATION (video1 - video17)
+    // ============================================
+    var scenes = [
+        {
+            name: "Scene 1",
+            thumbnailImg: "web_html/video1/input.png",
+            glbPath: "web_html/video1/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 2",
+            thumbnailImg: "web_html/video2/input.png",
+            glbPath: "web_html/video2/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb"
+        },
+        {
+            name: "Scene 3",
+            thumbnailImg: "web_html/video3/input.png",
+            glbPath: "web_html/video3/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 4",
+            thumbnailImg: "web_html/video4/input.png",
+            glbPath: "web_html/video4/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 5",
+            thumbnailImg: "web_html/video5/input.png",
+            glbPath: "web_html/video5/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb"
+        },
+        {
+            name: "Scene 6",
+            thumbnailImg: "web_html/video6/input.png",
+            glbPath: "web_html/video6/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 7",
+            thumbnailImg: "web_html/video7/input.png",
+            glbPath: "web_html/video7/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 8",
+            thumbnailImg: "web_html/video8/input.png",
+            glbPath: "web_html/video8/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb"
+        },
+        {
+            name: "Scene 9",
+            thumbnailImg: "web_html/video9/input.png",
+            glbPath: "web_html/video9/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 10",
+            thumbnailImg: "web_html/video10/input.png",
+            glbPath: "web_html/video10/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 11",
+            thumbnailImg: "web_html/video11/input.png",
+            glbPath: "web_html/video11/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb"
+        },
+        {
+            name: "Scene 12",
+            thumbnailImg: "web_html/video12/input.png",
+            glbPath: "web_html/video12/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 13",
+            thumbnailImg: "web_html/video13/input.png",
+            glbPath: "web_html/video13/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 14",
+            thumbnailImg: "web_html/video14/input.png",
+            glbPath: "web_html/video14/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000 (1).glb"
+        },
+        {
+            name: "Scene 15",
+            thumbnailImg: "web_html/video15/input.png",
+            glbPath: "web_html/video15/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 16",
+            thumbnailImg: "web_html/video16/input.png",
+            glbPath: "web_html/video16/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 17",
+            thumbnailImg: "web_html/video17/input.png",
+            glbPath: "web_html/video17/nov-04-5block-3dfront-full-0.00125-mixtrellis0.5-mixsynthetic-layer2-1.0_crimson-nautilus_2025.11.04_15.05-40000.glb"
+        },
+        {
+            name: "Scene 18",
+            thumbnailImg: "web_html/video18/input.png",
+            glbPath: "web_html/video18/scene_pred.glb"
+        },
+        {
+            name: "Scene 19",
+            thumbnailImg: "web_html/video19/input.png",
+            glbPath: "web_html/video19/scene_pred (1).glb"
+        }
+    ];
+
+    // ============================================
+    // DOM Elements
+    // ============================================
+    var canvas = document.getElementById('threeCanvas');
+    var instanceButtons = document.getElementById('instanceButtons');
+    var thumbBar = document.getElementById('thumbBar');
+    var leftBtn = document.getElementById('leftBtn');
+    var rightBtn = document.getElementById('rightBtn');
+    var loadingText = document.getElementById('loadingText');
+
+    // ============================================
+    // Three.js Variables
+    // ============================================
+    var scene, camera, renderer, controls, loader;
+    var currentModel = null;
+    var sceneObjects = []; // Top-level objects (instances)
+    var currentSceneIndex = 0;
+
+    // ============================================
+    // Initialize Three.js
+    // ============================================
+    function initThree() {
+        // Scene
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf5f5f5);
+
+        // Camera
+        var aspect = canvas.clientWidth / canvas.clientHeight;
+        camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+        camera.position.set(3, 3, 3);
+
+        // Renderer
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.NoToneMapping;
+        renderer.toneMappingExposure = 1;
+        
+        // Enable shadows - VSM for softer shadows
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.VSMShadowMap;
+
+        // Controls
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1.0;
+
+        // Lighting - with shadows
+        var ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+        scene.add(ambientLight);
+
+        // Main shadow-casting light with very soft shadows
+        var mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        mainLight.position.set(8, 15, 10); // Higher and further for softer shadows
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
+        mainLight.shadow.camera.near = 0.1;
+        mainLight.shadow.camera.far = 100;
+        mainLight.shadow.camera.left = -15;
+        mainLight.shadow.camera.right = 15;
+        mainLight.shadow.camera.top = 15;
+        mainLight.shadow.camera.bottom = -15;
+        mainLight.shadow.bias = -0.0001;
+        mainLight.shadow.radius = 8; // Much softer shadow edges
+        mainLight.shadow.blurSamples = 25; // More blur samples
+        scene.add(mainLight);
+
+        // Fill lights (no shadows for performance)
+        var fillLight1 = new THREE.DirectionalLight(0xffffff, 0.5);
+        fillLight1.position.set(-5, 5, -5);
+        scene.add(fillLight1);
+
+        var fillLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+        fillLight2.position.set(0, 5, -10);
+        scene.add(fillLight2);
+
+        // Hemisphere light
+        var hemiLight = new THREE.HemisphereLight(0xffffff, 0x888888, 0.8);
+        scene.add(hemiLight);
+
+        // Ground plane to receive shadows (will be repositioned when model loads)
+        var groundGeometry = new THREE.PlaneGeometry(30, 30);
+        var groundMaterial = new THREE.ShadowMaterial({ opacity: 0.2 }); // Lighter shadow
+        var ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -1.5;
+        ground.receiveShadow = true;
+        ground.name = 'shadowGround';
+        scene.add(ground);
+
+        // GLTF Loader
+        loader = new GLTFLoader();
+
+        // Handle resize
+        window.addEventListener('resize', onWindowResize);
+
+        // Start animation loop
+        animate();
+    }
+
+    function onWindowResize() {
+        var width = canvas.clientWidth;
+        var height = canvas.clientHeight;
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    // ============================================
+    // Load Scene
+    // ============================================
+    function loadScene(index) {
+        currentSceneIndex = index;
+        var sceneData = scenes[index];
+        
+        console.log('Loading:', sceneData.glbPath);
+        loadingText.style.display = 'block';
+        loadingText.textContent = 'Loading ' + sceneData.name + '...';
+        
+        // Remove current model
+        if (currentModel) {
+            scene.remove(currentModel);
+            currentModel = null;
+        }
+        sceneObjects = [];
+        instanceButtons.innerHTML = '';
+
+        // Load new GLB
+        loader.load(
+            sceneData.glbPath,
+            function(gltf) {
+                currentModel = gltf.scene;
+                scene.add(currentModel);
+                
+                console.log('Model loaded!');
+                console.log('Model children:', currentModel.children);
+                
+                // Find all objects that contain meshes (each object = 1 instance)
+                // First try direct children
+                currentModel.children.forEach(function(child, i) {
+                    // Check if this child has meshes
+                    var hasMesh = false;
+                    child.traverse(function(node) {
+                        if (node.isMesh) hasMesh = true;
+                    });
+                    if (hasMesh || child.isMesh) {
+                        sceneObjects.push(child);
+                        console.log('Instance ' + sceneObjects.length + ':', child.name || 'unnamed', child.type);
+                    }
+                });
+                
+                // If only 1 or 0 found, look deeper - maybe objects are in a group
+                if (sceneObjects.length <= 1 && currentModel.children.length > 0) {
+                    sceneObjects = [];
+                    var firstChild = currentModel.children[0];
+                    if (firstChild.children && firstChild.children.length > 1) {
+                        firstChild.children.forEach(function(grandChild, i) {
+                            sceneObjects.push(grandChild);
+                            console.log('Instance (level 2) ' + sceneObjects.length + ':', grandChild.name || 'unnamed');
+                        });
+                    }
+                }
+                
+                // If still not enough, find all meshes as separate instances
+                if (sceneObjects.length <= 1) {
+                    sceneObjects = [];
+                    currentModel.traverse(function(node) {
+                        if (node.isMesh) {
+                            sceneObjects.push(node);
+                            console.log('Mesh instance ' + sceneObjects.length + ':', node.name || 'unnamed');
+                        }
+                    });
+                }
+                
+                console.log('Total instances found:', sceneObjects.length);
+                
+                // Configure materials and shadows
+                currentModel.traverse(function(node) {
+                    if (node.isMesh) {
+                        // Enable shadows
+                        node.castShadow = true;
+                        node.receiveShadow = true;
+                        
+                        if (node.material) {
+                            // Handle both single material and material arrays
+                            var materials = Array.isArray(node.material) ? node.material : [node.material];
+                            materials.forEach(function(mat) {
+                                // Make sure material reacts to light
+                                if (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial) {
+                                    mat.metalness = 0;
+                                    mat.roughness = 0.5;
+                                    mat.envMapIntensity = 1;
+                                }
+                                mat.needsUpdate = true;
+                            });
+                        }
+                    }
+                });
+                
+                // Center and scale the model
+                var box = new THREE.Box3().setFromObject(currentModel);
+                var center = box.getCenter(new THREE.Vector3());
+                var size = box.getSize(new THREE.Vector3());
+                
+                var maxDim = Math.max(size.x, size.y, size.z);
+                var scale = 3 / maxDim;
+                currentModel.scale.setScalar(scale);
+                
+                currentModel.position.x = -center.x * scale;
+                currentModel.position.y = -center.y * scale;
+                currentModel.position.z = -center.z * scale;
+                
+                // Position ground plane just below the model
+                var scaledBox = new THREE.Box3().setFromObject(currentModel);
+                var groundY = scaledBox.min.y - 0.01; // Just slightly below the model
+                var shadowGround = scene.getObjectByName('shadowGround');
+                if (shadowGround) {
+                    shadowGround.position.y = groundY;
+                }
+
+                // Reset camera
+                camera.position.set(3, 3, 3);
+                controls.target.set(0, 0, 0);
+                controls.update();
+
+                // Create instance buttons
+                createInstanceButtons();
+                
+                // Hide loading
+                loadingText.style.display = 'none';
+            },
+            function(progress) {
+                if (progress.total > 0) {
+                    var percent = Math.round((progress.loaded / progress.total) * 100);
+                    loadingText.textContent = 'Loading... ' + percent + '%';
+                }
+            },
+            function(error) {
+                console.error('Error loading GLB:', error);
+                loadingText.textContent = 'Error loading model';
+            }
+        );
+    }
+
+    // ============================================
+    // Create Instance Buttons
+    // ============================================
+    function createInstanceButtons() {
+        instanceButtons.innerHTML = '';
+        
+        // Create button for each instance
+        sceneObjects.forEach(function(obj, i) {
+            var btn = document.createElement('button');
+            btn.className = 'instance-btn';
+            btn.textContent = 'Show Instance ' + (i + 1);
+            btn.onclick = function() { showInstance(i); };
+            instanceButtons.appendChild(btn);
+        });
+        
+        // Create "Show All" button
+        var showAllBtn = document.createElement('button');
+        showAllBtn.className = 'instance-btn show-all active';
+        showAllBtn.textContent = 'Show All';
+        showAllBtn.onclick = showAllInstances;
+        instanceButtons.appendChild(showAllBtn);
+    }
+
+    // ============================================
+    // Show Single Instance
+    // ============================================
+    function showInstance(index) {
+        console.log('Showing instance ' + (index + 1));
+        
+        // Hide all except selected
+        sceneObjects.forEach(function(obj, i) {
+            obj.visible = (i === index);
+        });
+        
+        // Update button states
+        var buttons = instanceButtons.querySelectorAll('.instance-btn');
+        buttons.forEach(function(btn, i) {
+            if (btn.classList.contains('show-all')) {
+                btn.classList.remove('active');
+            } else {
+                btn.classList.toggle('active', i === index);
+            }
+        });
+    }
+
+    // ============================================
+    // Show All Instances
+    // ============================================
+    function showAllInstances() {
+        console.log('Showing all instances');
+        
+        // Show all
+        sceneObjects.forEach(function(obj) {
+            obj.visible = true;
+        });
+        
+        // Update button states
+        var buttons = instanceButtons.querySelectorAll('.instance-btn');
+        buttons.forEach(function(btn) {
+            if (btn.classList.contains('show-all')) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    // ============================================
+    // Create Thumbnails
+    // ============================================
+    function createThumbnails() {
+        thumbBar.innerHTML = '';
+        
+        scenes.forEach(function(sceneData, index) {
+            var thumb = document.createElement('div');
+            thumb.className = 'thumb' + (index === 0 ? ' active' : '');
+            thumb.innerHTML = '<img src="' + sceneData.thumbnailImg + '" alt="' + sceneData.name + '">';
+            thumb.onclick = function() {
+                setActiveThumb(index);
+                loadScene(index);
+            };
+            thumbBar.appendChild(thumb);
+        });
+    }
+
+    // ============================================
+    // Set Active Thumbnail
+    // ============================================
+    function setActiveThumb(index) {
+        var thumbs = document.querySelectorAll('.thumb');
+        thumbs.forEach(function(t, i) {
+            t.classList.toggle('active', i === index);
+        });
+        
+        thumbs[index].scrollIntoView({
+            behavior: 'smooth',
+            inline: 'center',
+            block: 'nearest'
+        });
+    }
+
+    // ============================================
+    // Arrow Button Handlers
+    // ============================================
+    leftBtn.onclick = function() {
+        thumbBar.scrollBy({ left: -230, behavior: 'smooth' });
+    };
+
+    rightBtn.onclick = function() {
+        thumbBar.scrollBy({ left: 230, behavior: 'smooth' });
+    };
+
+    // ============================================
+    // Initialize
+    // ============================================
+    initThree();
+    createThumbnails();
+    loadScene(0);
+</script>
+
+</body>
+</html>
