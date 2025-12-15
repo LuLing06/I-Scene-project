@@ -606,7 +606,88 @@
         </section>
 
         <section id="findings" class="findings">
-            <h2>Key Findings for Non-Semantic Scenes</h2>
+            <h2>Interesting Findings for Non-Semantic Scenes</h2>
+            
+            <p style="text-align: center; margin-bottom: 10px; font-weight: bold;">Table 2. Comparison on 3D-FRONT and BlendSwap & Scenethesis. CD: Chamfer Distance; F-Score threshold τ=0.1. S = scene-level, O = object-level; IoU-B = volumetric IoU of scene bounding boxes. Best numbers are <b>bold</b>.</p>
+            
+            <div style="overflow-x: auto; max-width: 1000px; margin: 0 auto 30px auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.9em; text-align: center;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #333;">
+                            <th rowspan="2" style="padding: 10px; text-align: left; border-bottom: 1px solid #333;">Training dataset</th>
+                            <th colspan="5" style="padding: 10px; border-bottom: 1px solid #999;">3D-FRONT</th>
+                            <th colspan="5" style="padding: 10px; border-bottom: 1px solid #999;">BlendSwap & Scenethesis</th>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #333;">
+                            <th style="padding: 8px;">CD-S↓</th>
+                            <th style="padding: 8px;">F-Score-S↑</th>
+                            <th style="padding: 8px;">CD-O↓</th>
+                            <th style="padding: 8px;">F-Score-O↑</th>
+                            <th style="padding: 8px;">IoU-B↑</th>
+                            <th style="padding: 8px;">CD-S↓</th>
+                            <th style="padding: 8px;">F-Score-S↑</th>
+                            <th style="padding: 8px;">CD-O↓</th>
+                            <th style="padding: 8px;">F-Score-O↑</th>
+                            <th style="padding: 8px;">IoU-B↑</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; text-align: left;">3D-FT (25K)</td>
+                            <td style="padding: 8px;"><b>0.0137</b></td>
+                            <td style="padding: 8px;"><b>93.77</b></td>
+                            <td style="padding: 8px;">0.0278</td>
+                            <td style="padding: 8px;">81.34</td>
+                            <td style="padding: 8px;"><b>0.8792</b></td>
+                            <td style="padding: 8px;">0.0118</td>
+                            <td style="padding: 8px;">90.79</td>
+                            <td style="padding: 8px;">0.0585</td>
+                            <td style="padding: 8px;">68.87</td>
+                            <td style="padding: 8px;">0.8222</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; text-align: left;">Rand-15K</td>
+                            <td style="padding: 8px;">0.0496</td>
+                            <td style="padding: 8px;">79.96</td>
+                            <td style="padding: 8px;">0.0932</td>
+                            <td style="padding: 8px;">55.01</td>
+                            <td style="padding: 8px;">0.7729</td>
+                            <td style="padding: 8px;">0.0081</td>
+                            <td style="padding: 8px;">92.67</td>
+                            <td style="padding: 8px;">0.0698</td>
+                            <td style="padding: 8px;">67.36</td>
+                            <td style="padding: 8px;">0.8445</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 8px; text-align: left;">Rand-25K</td>
+                            <td style="padding: 8px;">0.0406</td>
+                            <td style="padding: 8px;">81.39</td>
+                            <td style="padding: 8px;">0.0402</td>
+                            <td style="padding: 8px;">74.76</td>
+                            <td style="padding: 8px;">0.7783</td>
+                            <td style="padding: 8px;">0.0075</td>
+                            <td style="padding: 8px;">93.60</td>
+                            <td style="padding: 8px;">0.0580</td>
+                            <td style="padding: 8px;">70.18</td>
+                            <td style="padding: 8px;">0.8471</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; text-align: left;">3D-FT+Rand-15K</td>
+                            <td style="padding: 8px;">0.0148</td>
+                            <td style="padding: 8px;">93.50</td>
+                            <td style="padding: 8px;"><b>0.0207</b></td>
+                            <td style="padding: 8px;"><b>84.28</b></td>
+                            <td style="padding: 8px;">0.8762</td>
+                            <td style="padding: 8px;"><b>0.0059</b></td>
+                            <td style="padding: 8px;"><b>94.26</b></td>
+                            <td style="padding: 8px;"><b>0.0503</b></td>
+                            <td style="padding: 8px;"><b>72.39</b></td>
+                            <td style="padding: 8px;"><b>0.8568</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
             <ul>
                 <li>Instead of high-level scene semnatics, geometric cue alone provides a strong learning signal for spatial reasoning.</li>
                 <li>Non-semantic spatial relations are a valuable supervision source; scaling non-semantic data provides richer spatial coverage that the model can exploit.</li>
