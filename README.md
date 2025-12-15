@@ -1,15 +1,11 @@
 # I-Scene: 3D Instance Models are Implicit Generalizable Spatial Learners
 
 <p align="center">
-  <a href="https://luling06.github.io/I-Scene-project/">
-    <img src="https://img.shields.io/badge/Project-Page-blue?style=for-the-badge" alt="Project Page">
-  </a>
-  <a href="#">
-    <img src="https://img.shields.io/badge/arXiv-2506.XXXXX-b31b1b?style=for-the-badge" alt="arXiv">
-  </a>
-  <a href="#">
-    <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
-  </a>
+  🏠 <a href="https://luling06.github.io/I-Scene-project/"><b>Project Page</b></a> | 
+  📄 <a href="#"><b>Paper</b></a> | 
+  🤗 <a href="#"><b>Model</b></a> | 
+  📦 <a href="#"><b>Dataset</b></a> | 
+  🎮 <a href="#"><b>Online Demo</b></a>
 </p>
 
 <p align="center">
@@ -38,7 +34,7 @@
 - **Model Flexibility:** A pre-trained 3D instance generator can be directly reprogrammed as a scene-level spatial learner, without scene-level annotations.
 - **Transferable Spatial Prior:** The reprogrammed model's spatial prior provides a rich learning signal for inferring proximity, support, and symmetry from purely geometric cues.
 - **Data Independence:** The model learns spatial knowledge on non-semantic scenes from randomly composed objects, removing dependency on annotated data.
-- **Strong Generalization:** It allows for easy generalization to unseen layouts and various spatial relations, surpassing SOTA methods trained on annotated scenes.
+- **Strong Generalizability:** It allows for easy generalization to unseen layouts and various spatial relations, surpassing SOTA methods trained on annotated scenes.
 
 ## ⏩ Updates
 
