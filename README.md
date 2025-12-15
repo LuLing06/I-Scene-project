@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-  <sup>1</sup>Purdue University &nbsp;&nbsp; <sup>2</sup>NVIDIA
+  <sup>1</sup>Purdue University &nbsp;&nbsp; <sup>2</sup>NVIDIA Research
 </p>
 
 ---
