@@ -30,7 +30,7 @@
 **I-Scene** reprograms a pre-trained 3D instance generator to act as a scene-level learner, replacing dataset-bounded supervision with model-centric spatial supervision. This unlocks the generator's transferable spatial knowledge, enabling generalization to unseen layouts and novel object compositions.
 
 <p align="center">
-  <img src="web_html/video2/input.png" alt="Teaser" width="600">
+  <img src="web_html/teaser.png" alt="Teaser" width="800">
 </p>
 
 ## 🔑 Key Findings
