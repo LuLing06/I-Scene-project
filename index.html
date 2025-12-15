@@ -612,7 +612,7 @@
         </section>
 
         <section id="findings" class="findings">
-            <h2>Interesting Findings for Non-Semantic Scenes</h2>
+            <h2>Key Findings</h2>
             
             <p style="text-align: center; margin-bottom: 10px; font-weight: bold;">Table 2. Comparison on 3D-FRONT and BlendSwap & Scenethesis. CD: Chamfer Distance; F-Score threshold τ=0.1. S = scene-level, O = object-level; IoU-B = volumetric IoU of scene bounding boxes. Best numbers are <b>bold</b>.</p>
             
@@ -695,8 +695,10 @@
             </div>
             
             <ul>
-                <li>Instead of high-level scene semnatics, geometric cue alone provides a strong learning signal for spatial reasoning.</li>
-                <li>Non-semantic spatial relations are a valuable supervision source; scaling non-semantic data provides richer spatial coverage that the model can exploit.</li>
+                <li><b>Model Flexibility:</b> A pre-trained 3D instance generator can be directly reprogrammed as a scene-level spatial learner, without scene-level annotations.</li>
+                <li><b>Transferable Spatial Prior:</b> The reprogrammed model's spatial prior provides a rich learning signal for inferring proximity, support, and symmetry from purely geometric cues.</li>
+                <li><b>Data Independence:</b> The model learns spatial knowledge on non-semantic scenes from randomly composed objects, removing dependency on annotated data.</li>
+                <li><b>Strong Generalization:</b> It allows for easy generalization to unseen layouts and various spatial relations, surpassing SOTA methods trained on annotated scenes.</li>
             </ul>
         </section>
 
