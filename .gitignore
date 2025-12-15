@@ -1,0 +1,41 @@
+# Python scripts (keep locally, don't upload)
+*.py
+
+# Config files
+rotation_config_*.json
+
+# Angle preview folders
+**/angle_previews/
+
+# Individual method GLB files (only I-Scene.glb needed)
+**/Gen3DSR*.glb
+**/MIDI*.glb
+**/SceneGen*.glb
+**/PartCrafter*.glb
+
+# Individual RGB videos (already combined into combined_sidebyside.mp4)
+**/*_rgb.mp4
+
+# Meta JSON files
+**/*_meta.json
+
+# Temp folders
+**/temp_*/
+
+# Render logs
+*.log
+
+# macOS
+.DS_Store
+
+# Other unnecessary files
+**/angle_config.json
+**/meta.json
+**/videos.txt
+**/*_mask.mp4
+**/combined_all.mp4
+**/rgb.mp4
+**/mask.mp4
+**/RGB.png
+**/seg*.png
+**/scenegen.mp4
