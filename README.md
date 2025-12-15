@@ -44,7 +44,9 @@
 
 - [ ] Release inference code
 - [ ] Release sparse structure latent VAE weights
+- [ ] Release interactive huggingface demo and usage
 - [ ] Release training data
+
 
 ## 🚀 Demo
 
@@ -67,14 +69,6 @@ cd I-Scene-project
 # Coming soon
 ```
 
-## 📊 Results
-
-| Training Dataset | 3D-FRONT CD-S↓ | 3D-FRONT F-Score-S↑ | BlendSwap CD-S↓ | BlendSwap F-Score-S↑ |
-|------------------|----------------|---------------------|-----------------|----------------------|
-| 3D-FT (25K)      | **0.0137**     | **93.77**           | 0.0118          | 90.79                |
-| Rand-15K         | 0.0496         | 79.96               | 0.0081          | 92.67                |
-| Rand-25K         | 0.0406         | 81.39               | 0.0075          | 93.60                |
-| 3D-FT+Rand-15K   | 0.0148         | 93.50               | **0.0059**      | **94.26**            |
 
 ## 📜 Citation
 
@@ -93,13 +87,13 @@ If you find this work helpful, please consider citing our paper:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-We thank the authors of [MIDI](https://huanngzh.github.io/MIDI-Page/), [TRELLIS](https://github.com/microsoft/TRELLIS), and other related works for their inspiring research.
+We thank the authors of [TRELLIS](https://github.com/microsoft/TRELLIS), and other related works for their inspiring research.
 
 ---
 
 <p align="center">
-  <i>The website template is borrowed from <a href="https://nerfies.github.io/">Nerfies</a>.</i>
+  <i>The website template is borrowed from <a href="https://nerfies.github.io/">Nerfies</a> and <a href="https://github.com/VAST-AI-Research/MIDI-3D">MIDI</a>.</i>
 </p>
 
