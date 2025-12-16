@@ -38,10 +38,9 @@
 
 ## 🔥 Updates
 
-- [ ] Release inference code
-- [ ] Release sparse structure latent VAE weights
+- [ ] Release inference code and sparse structure flow transformer
 - [ ] Release interactive huggingface demo and usage
-- [ ] Release training data
+- [ ] Release training data scripts
 - [ ] Release evaluation code
 
 
