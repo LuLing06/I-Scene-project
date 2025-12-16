@@ -2,7 +2,7 @@
 
 <p align="center">
   🏠 <a href="https://luling06.github.io/I-Scene-project/"><b>Project Page</b></a> | 
-  📄 <a href="#"><b>Paper</b></a> | 
+  📄 <a href="https://arxiv.org/abs/2512.13683"><b>Paper</b></a> | 
   🤗 <a href="#"><b>Model</b></a> | 
   📦 <a href="#"><b>Dataset</b></a> | 
   🎮 <a href="#"><b>Online Demo</b></a>
@@ -75,7 +75,7 @@ If you find this work helpful, please consider citing our paper:
 @article{ling2025iscene,
   title={I-Scene: 3D Instance Models are Implicit Generalizable Spatial Learners},
   author={Ling, Lu and Ge, Yunhao and Sheng, Yichen and Bera, Aniket},
-  journal={arXiv preprint arXiv:2506.XXXXX},
+  journal={arXiv preprint arXiv:2512.13683},
   year={2025}
 }
 ```
