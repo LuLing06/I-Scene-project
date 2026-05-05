@@ -51,31 +51,12 @@
 
 ## 📦 Installation
 
-The current release is inference-only. We tested with Python 3.10, CUDA 12.x, PyTorch 2.4.0 + CUDA 12.1, and an NVIDIA H100 GPU.
-
-Quick setup:
+Clone the repository and install I-Scene with all inference and demo dependencies:
 
 ```bash
 git clone https://github.com/LuLing06/I-Scene-project.git
 cd I-Scene-project
-pip install torch==2.4.0 torchvision==0.19.0 --index-url https://download.pytorch.org/whl/cu121
-pip install -e .
-pip install -r requirements.txt
-pip install spconv-cu120==2.3.6
-pip install xformers==0.0.27.post2
-pip install flash-attn==2.7.0.post2 --no-build-isolation
-```
-
-Notes:
-
-- Install the PyTorch wheel that matches your CUDA version if you are not using CUDA 12.1.
-- GLB mesh export also needs `nvdiffrast`, `kaolin`, `xatlas`, `pyvista`, `pymeshfix`, and `igraph`.
-- These CUDA/PyTorch extension packages are version-sensitive; install compatible wheels for your machine.
-
-For the interactive demo:
-
-```bash
-pip install -r requirements-demo.txt
+pip install -e . -r requirements.txt
 ```
 
 ## 🚀 Demo
@@ -156,12 +137,6 @@ scene_pred.ply                 # merged Gaussian Splatting scene
 scene_pred.glb                 # merged mesh scene, if GLB export is enabled
 instance_XX.*                  # per-instance asset for mask label XX
 ```
-
-## 🧪 Verification
-
-The current Hugging Face model `LuLing/IScene` was checked against the original implementation for the current paired examples. Stage 1 sparse structure generation matched exactly for all tested pairs: labels, preprocessing tensor hashes, sparse coordinate hashes, and per-slot occupancy.
-
-Stage 2 and final asset export can show small numerical differences on GPU, so the release criterion is exact Stage 1 agreement plus visually consistent final outputs.
 
 ## 📜 Citation
 
