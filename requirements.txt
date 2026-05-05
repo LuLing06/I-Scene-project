@@ -22,12 +22,14 @@ safetensors==0.4.5
 tqdm==4.67.1
 transformers==4.46.3
 trimesh==4.5.3
-utils3d==0.0.2
+git+https://github.com/EasternJournalist/utils3d.git@9a4eb15e4021b67b12c460c7057d642626897ec8
 xatlas==0.0.9
 pyvista==0.44.2
 pymeshfix==0.17.0
 igraph==0.11.8
 
 gradio==4.44.1
+# Gradio 4.44.1 uses Starlette's pre-1.0 TemplateResponse signature.
+starlette<1.0.0
 gradio-image-prompter==0.1.0
 gradio-litmodel3d==0.0.1
