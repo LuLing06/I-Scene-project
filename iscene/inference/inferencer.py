@@ -9,6 +9,7 @@ from PIL import Image
 from plyfile import PlyData, PlyElement
 import torch
 import trimesh
+from tqdm import tqdm
 
 from ..trellis.pipelines import TrellisImageTo3DSceneContextPipeline
 from ..trellis.modules import sparse as sp
@@ -115,6 +116,7 @@ class ISceneInferencer:
         simplify: float = 0.95,
         only_3dgs: bool = False,
         seed: int = 42,
+        verbose: bool = False,
     ) -> None:
         scene_results = self.infer_scene_instances(
             scene_rgb_path,
@@ -122,6 +124,7 @@ class ISceneInferencer:
             seed=seed,
             only_3dgs=only_3dgs,
             save_dbg=save_dbg,
+            verbose=verbose,
         )
         self.save_scene_outputs(
             scene_results,
@@ -130,6 +133,7 @@ class ISceneInferencer:
             save_dbg=save_dbg,
             simplify=simplify,
             only_3dgs=only_3dgs,
+            verbose=verbose,
         )
 
     @staticmethod
@@ -157,6 +161,7 @@ class ISceneInferencer:
         seed: int,
         sparse_structure_sampler_params: dict,
         collect_debug: bool,
+        verbose: bool,
     ) -> dict | None:
         if scene_rgb is None or not instance_masks:
             logging.warning("Empty input lists for sparse-structure inference.")
@@ -191,6 +196,7 @@ class ISceneInferencer:
             ss_cond,
             num_samples=resolved_batch_size,
             sampler_params=sparse_structure_sampler_params,
+            verbose=verbose,
         )
 
         results = {
@@ -212,6 +218,7 @@ class ISceneInferencer:
         seed: int = 42,
         only_3dgs: bool = False,
         save_dbg: bool = False,
+        verbose: bool = False,
     ):
         scene_rgb, instance_masks, scene_mask_pil, label_ids = self._prepare_instance_inputs(
             scene_rgb_path,
@@ -233,6 +240,7 @@ class ISceneInferencer:
             seed=seed,
             sparse_structure_sampler_params=SPARSE_STRUCTURE_SAMPLER_PARAMS,
             collect_debug=save_dbg,
+            verbose=verbose,
         )
         if stage1_results is None:
             return None
@@ -242,6 +250,7 @@ class ISceneInferencer:
             stage1_results["slat_cond"],
             coords,
             sampler_params=SLAT_SAMPLER_PARAMS,
+            verbose=verbose,
         )
 
         num_instances = stage1_results["num_instances"]
@@ -257,7 +266,7 @@ class ISceneInferencer:
         unique_batch_ids = torch.unique(slat.coords[:, 0]).sort()[0]
         decode_formats = ["gaussian"] if only_3dgs else ["mesh", "gaussian"]
         decoded_results = {fmt: [None] * total_slots for fmt in decode_formats}
-        for bid in unique_batch_ids:
+        for bid in tqdm(unique_batch_ids, desc="Decoding assets", disable=not verbose):
             bid_int = int(bid.item())
             if bid_int in skipped_slot_ids:
                 continue
@@ -297,6 +306,7 @@ class ISceneInferencer:
         save_dbg: bool = False,
         simplify: float = 0.95,
         only_3dgs: bool = False,
+        verbose: bool = False,
     ) -> None:
         if scene_results is None:
             return
@@ -334,7 +344,7 @@ class ISceneInferencer:
 
         if only_3dgs:
             instance_ply_paths: list[str] = []
-            for instance_idx in range(num_instances):
+            for instance_idx in tqdm(range(num_instances), desc="Saving Gaussian assets", disable=not verbose):
                 label_id = label_ids[instance_idx] if instance_idx < len(label_ids) else instance_idx
                 for slot_idx in range(num_slots):
                     if slot_idx != instance_slot_idx or slot_idx == scene_slot_idx:
@@ -362,7 +372,7 @@ class ISceneInferencer:
 
             instance_glbs: list[Path] = []
 
-            for instance_idx in range(num_instances):
+            for instance_idx in tqdm(range(num_instances), desc="Exporting GLB assets", disable=not verbose):
                 label_id = label_ids[instance_idx] if instance_idx < len(label_ids) else instance_idx
                 for slot_idx in range(num_slots):
                     if slot_idx != instance_slot_idx or slot_idx == scene_slot_idx:

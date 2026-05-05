@@ -6,6 +6,8 @@ import argparse
 import sys
 from pathlib import Path
 
+from tqdm import tqdm
+
 
 DEFAULT_MODEL = "LuLing/IScene"
 DEFAULT_SEED = 43
@@ -77,17 +79,27 @@ def main(argv: list[str] | None = None) -> int:
 
     from iscene.inference.inferencer import ISceneInferencer
 
-    inferencer = ISceneInferencer.from_pretrained(args.model, base_model_id=args.base_model)
-    inferencer.infer_and_save_scene(
-        scene_rgb_path=args.rgb,
-        instance_seg_path=args.mask,
-        output_dir=args.output_dir,
-        overwrite=True,
-        save_dbg=args.save_dbg,
-        simplify=args.simplify,
-        only_3dgs=args.only_3dgs,
-        seed=args.seed,
-    )
+    with tqdm(total=2, desc="I-Scene inference", unit="stage") as progress:
+        progress.set_description("Loading model")
+        inferencer = ISceneInferencer.from_pretrained(args.model, base_model_id=args.base_model)
+        inferencer.pipeline = inferencer.setup_pipeline()
+        progress.update()
+
+        progress.set_description("Generating scene")
+        inferencer.infer_and_save_scene(
+            scene_rgb_path=args.rgb,
+            instance_seg_path=args.mask,
+            output_dir=args.output_dir,
+            overwrite=True,
+            save_dbg=args.save_dbg,
+            simplify=args.simplify,
+            only_3dgs=args.only_3dgs,
+            seed=args.seed,
+            verbose=True,
+        )
+        progress.update()
+
+    print(f"Outputs saved to: {args.output_dir.resolve()}")
     return 0
 
 

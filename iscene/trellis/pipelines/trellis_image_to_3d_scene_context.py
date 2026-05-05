@@ -242,6 +242,7 @@ class TrellisImageTo3DSceneContextPipeline(Pipeline):
         cond: dict,
         num_samples: int = 1,
         sampler_params: dict = {},
+        verbose: bool = False,
     ) -> torch.Tensor:
         """
         Sample sparse structures with the given conditioning.
@@ -267,7 +268,7 @@ class TrellisImageTo3DSceneContextPipeline(Pipeline):
             noise,
             **cond,
             **sampler_params,
-            verbose=False
+            verbose=verbose
         ).samples
 
         # z_s is a tensor of instance-scene sparse structures
@@ -307,6 +308,7 @@ class TrellisImageTo3DSceneContextPipeline(Pipeline):
         cond: dict,
         coords: torch.Tensor,
         sampler_params: dict = {},
+        verbose: bool = False,
     ) -> sp.SparseTensor:
         """
         Sample structured latent with the given conditioning.
@@ -329,7 +331,7 @@ class TrellisImageTo3DSceneContextPipeline(Pipeline):
             noise,
             **cond,
             **sampler_params,
-            verbose=False
+            verbose=verbose
         ).samples
 
         std = torch.tensor(self.slat_normalization['std'])[None].to(slat.device)
