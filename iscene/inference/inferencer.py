@@ -13,7 +13,7 @@ import trimesh
 from ..trellis.pipelines import TrellisImageTo3DSceneContextPipeline
 from ..trellis.modules import sparse as sp
 
-from .segmentation_utils import load_scene_and_instance_masks
+from .segmentation_utils import load_scene_and_instance_masks, segmentation_to_id_map
 
 
 DEFAULT_BASE_MODEL_ID = "microsoft/TRELLIS-image-large"
@@ -142,7 +142,8 @@ class ISceneInferencer:
             scene_rgb_path,
             instance_seg_path,
         )
-        scene_mask_pil = Image.open(instance_seg_path).convert("L")
+        scene_mask = (segmentation_to_id_map(Image.open(instance_seg_path)) > 0).astype("uint8") * 255
+        scene_mask_pil = Image.fromarray(scene_mask)
         return scene_rgb, instance_masks, scene_mask_pil, label_ids
 
     @staticmethod
