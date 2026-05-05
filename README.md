@@ -49,22 +49,6 @@
 - [ ] Release training data scripts
 - [ ] Release evaluation code
 
-## 🚀 Demo
-
-Visit our **[Project Page](https://luling06.github.io/I-Scene-web-page/)** for:
-
-- Interactive 3D scene visualization
-- Comparison with state-of-the-art methods
-- More visualization examples
-
-This repository includes a local Gradio demo for interactive segmentation and generation:
-
-```bash
-python interactive_demo.py --model LuLing/IScene
-```
-
-This is different from a hosted web demo. A hosted online demo, such as a Hugging Face Space, will be released separately.
-
 ## 📦 Installation
 
 The current release is inference-only. We tested with Python 3.10, CUDA 12.x, PyTorch 2.4.0 + CUDA 12.1, and an NVIDIA H100 GPU.
@@ -93,6 +77,22 @@ For the interactive demo:
 ```bash
 pip install -r requirements-demo.txt
 ```
+
+## 🚀 Demo
+
+Visit our **[Project Page](https://luling06.github.io/I-Scene-web-page/)** for:
+
+- Interactive 3D scene visualization
+- Comparison with state-of-the-art methods
+- More visualization examples
+
+This repository includes a local Gradio demo for interactive segmentation and generation:
+
+```bash
+python interactive_demo.py --model LuLing/IScene
+```
+
+This is different from a hosted web demo. A hosted online demo, such as a Hugging Face Space, will be released separately.
 
 ## 🎯 Inference
 
