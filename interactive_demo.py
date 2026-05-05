@@ -59,12 +59,25 @@ Workflow:
 5. To save each instance in the scene, run the inference code with the same RGB/mask; `run_inference.py` writes per-instance assets alongside the scene output.
 """
 
+EXAMPLE_ORDER = [
+    "Scenethesis/SAM-3D-testing-case_rgb.png",
+    "Gen3DSR/Gen3DSR_scene1_rgb.png",
+    "MIDI-example/cartoon_style_07_rgb.png",
+    "Scenethesis/children_playroom2_rgb.png",
+    "Scenethesis/scenethesis-reading-corner-rgb.png",
+    "DL3DV/DL3DV-garden-rgb.png",
+    "DL3DV/DL3DV-table-chair-set-rgb.png",
+    "DL3DV/DL3DV-tables-rgb.png",
+    "outdoor/scene_beach2_rgb.png",
+]
+
+
 def _discover_examples() -> list[tuple[str, Path, Path]]:
     examples_root = REPO_ROOT / "examples"
     pairs: list[tuple[str, Path, Path]] = []
-    for rgb_path in sorted(examples_root.rglob("*.png")):
-        rel = rgb_path.relative_to(examples_root)
-        if rel.parent == Path("."):
+    for rel_name in EXAMPLE_ORDER:
+        rgb_path = examples_root / rel_name
+        if not rgb_path.exists():
             continue
 
         seg_path = None
@@ -75,6 +88,7 @@ def _discover_examples() -> list[tuple[str, Path, Path]]:
         if seg_path is None or not seg_path.exists():
             continue
 
+        rel = rgb_path.relative_to(examples_root)
         case_name = rgb_path.stem.replace("_rgb", "").replace("-rgb", "")
         label = f"{rel.parent.as_posix()} / {case_name}"
         pairs.append((label, rgb_path, seg_path))
