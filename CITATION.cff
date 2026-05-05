@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+title: "I-Scene: 3D Instance Models are Implicit Generalizable Spatial Learners"
+message: "If you use I-Scene, please cite the I-Scene paper and the TRELLIS paper."
+url: "https://luling06.github.io/I-Scene-web-page/"
+repository-code: "https://github.com/LuLing06/I-Scene-project"
+authors:
+  - family-names: "Ling"
+    given-names: "Lu"
+  - family-names: "Ge"
+    given-names: "Yunhao"
+  - family-names: "Sheng"
+    given-names: "Yichen"
+  - family-names: "Bera"
+    given-names: "Aniket"
+date-released: 2026-05-05
+references:
+  - type: article
+    title: "I-Scene: 3D Instance Models are Implicit Generalizable Spatial Learners"
+    authors:
+      - family-names: "Ling"
+        given-names: "Lu"
+      - family-names: "Ge"
+        given-names: "Yunhao"
+      - family-names: "Sheng"
+        given-names: "Yichen"
+      - family-names: "Bera"
+        given-names: "Aniket"
+    journal: "arXiv preprint arXiv:2512.13683"
+    year: 2025
+  - type: article
+    title: "Structured 3D Latents for Scalable and Versatile 3D Generation"
+    url: "https://trellis3d.github.io/"

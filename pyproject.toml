@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "i-scene"
+version = "0.1.0"
+description = "I-Scene inference code for segmentation-conditioned 3D scene generation."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Lu Ling" },
+  { name = "Yunhao Ge" },
+  { name = "Yichen Sheng" },
+  { name = "Aniket Bera" },
+]
+
+[tool.setuptools.packages.find]
+include = ["iscene*"]

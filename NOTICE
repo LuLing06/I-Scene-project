@@ -1,0 +1,25 @@
+I-Scene
+
+This repository contains the I-Scene inference code and the IScene-v1 model
+package for segmentation-conditioned 3D scene generation.
+
+IScene-v1:
+  Model package: IScene-v1
+  Project: https://luling06.github.io/I-Scene-web-page/
+  Code: https://github.com/LuLing06/I-Scene-project
+  Hugging Face repository: https://huggingface.co/LuLing/IScene
+  Contents: IScene-specific checkpoint files and inference configuration
+  Base model: microsoft/TRELLIS-image-large
+
+I-Scene builds on TRELLIS, the image-to-3D generation framework released by
+Microsoft under the MIT License.
+
+TRELLIS:
+  Repository: https://github.com/microsoft/TRELLIS
+  Model: https://huggingface.co/microsoft/TRELLIS-image-large
+  Paper: Structured 3D Latents for Scalable and Versatile 3D Generation
+
+The IScene-v1 model package provides I-Scene-specific checkpoint files and loads
+TRELLIS base components from `microsoft/TRELLIS-image-large`. The TRELLIS
+copyright notice and license terms should be preserved when redistributing code
+or model packages derived from TRELLIS.

@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.env
+.env.*
+*.log
+*.tmp
+
+outputs/
+
+release_hf/
+release_hf/*/ckpts/*.pt
+release_hf/*/ckpts/*.bin
+release_hf/*/ckpts/*.safetensors
+
+.DS_Store
