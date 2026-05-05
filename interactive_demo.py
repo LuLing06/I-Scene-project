@@ -57,6 +57,8 @@ Workflow:
 3. Click **Generate Gaussian Splatting Preview** to create and preview `scene_pred.ply`.
 4. Click **Generate GLB** only when you need mesh assets.
 5. To save each instance in the scene, run the inference code with the same RGB/mask; `run_inference.py` writes per-instance assets alongside the scene output.
+
+Note: The first run may be slow because the model checkpoint needs to be downloaded and cached.
 """
 
 EXAMPLE_ORDER = [

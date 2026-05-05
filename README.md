@@ -73,6 +73,8 @@ This repository includes a local Gradio demo for interactive segmentation and ge
 python interactive_demo.py --model LuLing/IScene
 ```
 
+Note: The first run may be slow because the model checkpoint needs to be downloaded and cached.
+
 This is different from a hosted web demo. A hosted online demo, such as a Hugging Face Space, will be released separately.
 
 ## 🎯 Inference
