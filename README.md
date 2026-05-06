@@ -51,13 +51,20 @@
 
 ## 📦 Installation
 
-Clone the repository and install I-Scene with all inference and demo dependencies:
+Set up your virtual environment with CUDA 12.1.1 and Python 3.10. Then, install I-Scene with all inference and demo dependencies:
 
 ```bash
 git clone https://github.com/LuLing06/I-Scene-project.git
 cd I-Scene-project
 pip install -e . -r requirements.txt
 ```
+If you cannot have the virtual environment setup, you can still build most of the dependencies with the requirements.txt file. The most headache problem is  installing nvdiffrast. You need nvcc installed and build nvdiffrast from scratch.
+
+If you still have troubles, we have uploaded a Docker image we are using. See below.
+
+### Docker
+- We provide a Dockerfile to build the Docker image. 
+- We also provide a pre-built Docker image on dockerhub: [`luling0506/iscene:latest`](https://hub.docker.com/r/luling0506/iscene).
 
 ## 🚀 Demo
 
