@@ -416,6 +416,17 @@ def clear_glb_outputs() -> tuple[dict[str, Any], str, None, dict[str, Any]]:
     return gr.update(value=None, interactive=False), "", None, gr.update(value=None)
 
 
+def clear_generation_outputs() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], str, None, dict[str, Any]]:
+    return (
+        gr.update(value=None),
+        gr.update(value=None, interactive=False),
+        gr.update(value=None, interactive=False),
+        "",
+        None,
+        gr.update(value=None),
+    )
+
+
 def build_demo() -> gr.Blocks:
     with gr.Blocks(title="I-Scene Interactive Demo", delete_cache=(3600, 3600)) as demo:
         gr.Markdown(MARKDOWN)
@@ -513,8 +524,8 @@ def build_demo() -> gr.Blocks:
         )
 
         generate_gs_button.click(
-            clear_glb_outputs,
-            outputs=[download_glb, glb_progress, run_state, glb_preview],
+            clear_generation_outputs,
+            outputs=[preview, download_gs, download_glb, glb_progress, run_state, glb_preview],
             show_progress="hidden",
         ).then(
             run_gaussian_preview,
