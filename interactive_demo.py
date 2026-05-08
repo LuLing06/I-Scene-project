@@ -98,7 +98,7 @@ def _discover_examples() -> list[tuple[str, Path, Path]]:
 
 
 EXAMPLES = _discover_examples()
-EXAMPLE_ROWS = [[{"image": str(rgb)}, str(mask)] for _, rgb, mask in EXAMPLES]
+EXAMPLE_ROWS = [[str(rgb), str(mask)] for _, rgb, mask in EXAMPLES]
 
 
 @dataclass
@@ -286,8 +286,24 @@ def reset_uploaded_image(image_prompts: Any) -> tuple[Any, None, str]:
     return resize_prompt_image(image_prompts), None, ""
 
 
-def remember_example_mask_path(_image_prompts: Any, mask_path: str) -> str:
-    return str(mask_path)
+def _coerce_file_path(value: Any) -> str:
+    if isinstance(value, dict):
+        return str(value.get("path") or value.get("name") or value.get("image") or "")
+    return str(value or "")
+
+
+def _raw_example_mask_path(mask_path: Any) -> str:
+    selected_mask = Path(_coerce_file_path(mask_path)).name
+    for _, _rgb_path, raw_mask_path in EXAMPLES:
+        if raw_mask_path.name == selected_mask:
+            return str(raw_mask_path)
+    return _coerce_file_path(mask_path)
+
+
+def load_example_pair(rgb_path: Any, mask_path: Any) -> tuple[dict[str, Any], str, str]:
+    rgb_value = _coerce_file_path(rgb_path)
+    mask_value = _coerce_file_path(mask_path)
+    return {"image": rgb_value, "points": []}, mask_value, _raw_example_mask_path(mask_path)
 
 
 @torch.no_grad()
@@ -547,12 +563,15 @@ def build_demo() -> gr.Blocks:
             show_progress="hidden",
         )
 
+        example_rgb = gr.Image(label="RGB", type="filepath", visible=False)
+        example_mask = gr.Image(label="Instance mask", type="filepath", visible=False)
+
         with gr.Row():
             gr.Examples(
                 examples=EXAMPLE_ROWS,
-                inputs=[image_prompts, sam_mask_preview],
-                outputs=[mask_path_value],
-                fn=remember_example_mask_path,
+                inputs=[example_rgb, example_mask],
+                outputs=[image_prompts, sam_mask_preview, mask_path_value],
+                fn=load_example_pair,
                 cache_examples=False,
                 label="Examples",
                 run_on_click=True,
