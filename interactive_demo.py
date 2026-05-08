@@ -51,6 +51,8 @@ MARKDOWN = """
 
 Generate a 3D scene from one image.
 
+**We notice some instability problems caused by huggingface space. We suggest serious users run this demo locally.**
+
 Workflow:
 1. Pick an example, or upload an image and draw boxes around objects.
 2. Use the example mask, or click **Run SAM Segmentation** to create a mask.
