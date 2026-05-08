@@ -9,7 +9,7 @@
   📄 <a href="https://arxiv.org/abs/2512.13683"><b>Paper</b></a> |
   🤗 <a href="https://huggingface.co/LuLing/IScene"><b>Model</b></a> |
   📦 <a href="#"><b>Dataset</b></a> |
-  🎮 <a href="#-demo"><b>Demo</b></a>
+  🎮 <a href="https://huggingface.co/spaces/LuLing/IScene-demo"><b>Demo</b></a>
 </p>
 
 <p align="center">
@@ -45,7 +45,7 @@
 - [x] Release inference code and sparse structure flow transformer
 - [x] Release I-Scene-v1 inference checkpoint
 - [x] Release local Gradio demo
-- [ ] Release hosted online demo, e.g. Hugging Face Space
+- [x] Release HF online demo
 - [ ] Release training data scripts
 - [ ] Release evaluation code
 
